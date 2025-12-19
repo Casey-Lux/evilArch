@@ -19,11 +19,8 @@ sudo pacman -S --needed \
     hashcat
 
 echo "[*] Installing Python tools (pipx)"
-sudo pacman -S --needed python-pipx
+sudo pacman -S --needed python python-pip python-pipx base-devel
 pipx ensurepath
-
-pipx install wfuzz || true
-# pipx install sqlmap || true
 
 echo "[*] Installing Go-based tools"
 sudo pacman -S --needed go
@@ -31,12 +28,26 @@ sudo pacman -S --needed go
 GO_BIN="$HOME/go/bin"
 mkdir -p "$GO_BIN"
 
-export PATH="$PATH:$GO_BIN"
-
 go install github.com/ffuf/ffuf/v2@latest
 go install github.com/projectdiscovery/httpx/cmd/httpx@latest
 go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
 go install github.com/owasp-amass/amass/v4/...@latest
+
+echo "[*] Persisting Go PATH configuration"
+
+PATH_FILE="$HOME/.path.zsh"
+
+if ! grep -q 'go/bin' "$PATH_FILE" 2>/dev/null; then
+  echo 'export PATH="$HOME/go/bin:$PATH"' >> "$PATH_FILE"
+fi
+
+ZSHRC="$HOME/.zshrc"
+
+if ! grep -q '.path.zsh' "$ZSHRC" 2>/dev/null; then
+  echo '' >> "$ZSHRC"
+  echo '# Load custom PATH entries' >> "$ZSHRC"
+  echo '[ -f "$HOME/.path.zsh" ] && source "$HOME/.path.zsh"' >> "$ZSHRC"
+fi
 
 echo "[*] Installing AD / network tooling"
 sudo pacman -S --needed impacket crackmapexec
@@ -45,4 +56,4 @@ echo "[*] Manual tools (not auto-installed):"
 echo "  - burpsuite (download from PortSwigger)"
 echo "  - pspy (download static binary when needed)"
 
-echo "[+] Done. Log out and back in to ensure PATH is updated."
+echo "[+] Done. Open a new terminal or source ~/.zshrc to use Go tools."
