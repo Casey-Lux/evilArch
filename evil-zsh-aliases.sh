@@ -33,7 +33,7 @@ ba() {
     echo "Uso: ba <area>"
     return 1
   fi
-  pacman -Sg "blackarch-$1" 2>/dev/null | awk '{print $2}'
+  pacman -Sg "blackarch-$1" | awk '{print $2}'
 }
 
 # Buscar herramientas BlackArch por nombre
@@ -47,7 +47,7 @@ ba-search() {
 
 # Listar TODAS las herramientas BlackArch (sin duplicados)
 ba-all() {
-  pacman -Sg | grep blackarch | awk '{print $2}' | sort -u
+  sudo pacman -Sgg | grep blackarch | cut -d' ' -f2 | sort -u
 }
 
 # Ver a qué áreas pertenece una herramienta
@@ -56,7 +56,12 @@ ba-where() {
     echo "Uso: ba-where <herramienta>"
     return 1
   fi
-  pacman -Qi "$1" 2>/dev/null | grep Groups
+  pacman -Qi "$1" | grep Groups
+}
+
+# Listar todas las categorías
+ba-cat(){
+	sudo pacman -S blackarch-<category>
 }
 
 # Wrapper explícito para instalar (no automático)
