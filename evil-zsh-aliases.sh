@@ -61,7 +61,7 @@ ba-where() {
 
 # Listar todas las categorías
 ba-cat(){
-	sudo pacman -S blackarch-<category>
+	sudo pacman -Sg | grep blackarch
 }
 
 # Wrapper explícito para instalar (no automático)
